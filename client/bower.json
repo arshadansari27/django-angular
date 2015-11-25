@@ -1,0 +1,26 @@
+{
+  "name": "client",
+  "version": "0.0.1",
+  "authors": [
+    "Mohammed Arshad Ansari <arshadansari27@gmail.com>"
+  ],
+  "description": "Test sample",
+  "main": "main.js",
+  "moduleType": [
+    "amd"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "angular": "~1.4.8",
+    "bootstrap": "~3.3.6",
+    "jquery": "~2.1.4",
+    "underscore": "~1.8.3"
+  }
+}
