@@ -1,5 +1,6 @@
 var services = angular.module('exampleServices', ['ngCookies', 'ngResource']);
 
+
 services.factory('AuthenticationService',
     ['$http', '$cookies', '$rootScope', '$timeout',
     function ($http, $cookies, $rootScope, $timeout) {

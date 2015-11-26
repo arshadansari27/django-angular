@@ -14,7 +14,12 @@
   <script src="js/router.js"></script>
 </head>
 <body>
-
+    <div class="text-center" ng-controller="FlashCtrl">
+        <div class="alert alert-info" ng-show="flash.length">
+            <!--a href="#" class="close" data-dismiss="alert">&times;</a-->
+            {{flash}}
+        </div>
+    </div>
     <div ng-view></div>
 </body>
 </html>

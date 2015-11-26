@@ -1,6 +1,6 @@
 var controllers = angular.module('exampleControllers', ['exampleServices']);
 
-controllers.controller('LoginCtrl', ['$scope', '$rootScope', '$location', 'AuthenticationService',
+controllers.controller('LoginCtrl', ['$scope', '$rootScope', '$location', 'AuthenticationService', 
     function ($scope, $rootScope, $location, AuthenticationService){
         AuthenticationService.clearCredentials();
         $scope.login  = function() {
@@ -8,6 +8,7 @@ controllers.controller('LoginCtrl', ['$scope', '$rootScope', '$location', 'Authe
             AuthenticationService.login($scope.username, $scope.password, function(response){
                 if(response.auth_token != undefined && response.auth_token.length > 0) {
                     AuthenticationService.setCredentials($scope.username, response);
+                    $scope.$emit('flashEmit', {message: 'Successfully logged in'});
                     $location.path('/');
                 } else {
                     $scope.error = 'Invalid credentials';
@@ -30,9 +31,10 @@ controllers.controller('LoginCtrl', ['$scope', '$rootScope', '$location', 'Authe
     }
 ]);
 
-controllers.controller('RegisterCtrl', ['$scope', '$rootScope', '$location', 'AuthenticationService',
+controllers.controller('RegisterCtrl', ['$scope', '$rootScope', '$location', 'AuthenticationService', 
     function ($scope, $rootScope, $location, AuthenticationService){
         if (AuthenticationService.isLoggedIn()) {
+            $scope.$emit('flashEmit', {message: 'Already logged in'});
             $location.path('/');
         }
         $scope.register = function() {
@@ -43,7 +45,8 @@ controllers.controller('RegisterCtrl', ['$scope', '$rootScope', '$location', 'Au
                 return;
             } 
             AuthenticationService.register($scope.username, $scope.email, $scope.password, function(response){
-                $location.path('/login')
+                    $scope.$emit('flashEmit', {message: 'Successfully registered'});
+                    $location.path('/login')
             }, function(response){
                 $scope.dataLoading = false;
                 var errors = '';
@@ -60,9 +63,10 @@ controllers.controller('RegisterCtrl', ['$scope', '$rootScope', '$location', 'Au
     }
 ]);
 
-controllers.controller('PasswordCtrl', ['$scope', '$rootScope', '$location', 'AuthenticationService',
+controllers.controller('PasswordCtrl', ['$scope', '$rootScope', '$location', 'AuthenticationService', 
     function ($scope, $rootScope, $location, AuthenticationService){
         if (!AuthenticationService.isLoggedIn()) {
+            $scope.$emit('flashEmit', {message: 'You  must login first'});
             $location.path('/login');
         }
         $scope.change_password = function() {
@@ -73,7 +77,8 @@ controllers.controller('PasswordCtrl', ['$scope', '$rootScope', '$location', 'Au
                 return;
             } 
             AuthenticationService.change_password($scope.old_password, $scope.password, function(response){
-                $location.path('/')
+                    $location.path('/')
+                    $scope.$emit('flashEmit', {message: 'Successfully changed password'});
             }, function(response){
                 $scope.dataLoading = false;
                 var errors = '';
@@ -89,6 +94,19 @@ controllers.controller('PasswordCtrl', ['$scope', '$rootScope', '$location', 'Au
         };
     }
 ]);
+controllers.controller('FlashCtrl', ['$scope', '$timeout',
+    function ($scope, $timeout){
+         $scope.$on('flashBroadcast', function(event, args) {
+            console.log('Flashing: ' + args.message);
+            $scope.flash = '' + args.message;
+             $timeout(function() {
+                $scope.flash = null;
+                console.log('update with timeout fired')
+            }, 3000);
+        });   
+    }
+]);
+
 controllers.controller('MainCtrl', ['$scope', '$rootScope', '$location', 'AuthenticationService',
     function ($scope, $rootScope, $location, AuthenticationService){
         AuthenticationService.isLoggedIn();
@@ -96,8 +114,6 @@ controllers.controller('MainCtrl', ['$scope', '$rootScope', '$location', 'Authen
         $scope.logout = function(){
 
             AuthenticationService.logout(function(response){
-                console.log(response);
-                console.log(JSON.stringify(response));
                 $location.path('/login');
             });
         };

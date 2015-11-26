@@ -38,8 +38,14 @@ exampleApp.run(['$rootScope', '$location', '$cookies', '$http',
         $rootScope.$on('$locationChangeStart', function (event, next, current) {
             // redirect to login page if not logged in
             if ($location.path() !== '/login' && $location.path() !== '/register' && !$rootScope.globals.currentUser) {
+
+                $rootScope.$emit('flashEmit', {message: 'Please log in first'});
                 $location.path('/login');
             }
+        });
+
+        $rootScope.$on('flashEmit', function(event, args) {
+            $rootScope.$broadcast('flashBroadcast', args);
         });
     }
 ]);
